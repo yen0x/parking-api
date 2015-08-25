@@ -12,37 +12,52 @@ import (
 	. "bitbucket.org/parking/logger"
 
 	"github.com/gorilla/mux"
+	"github.com/vrischmann/envconfig"
 )
 
 type Runtime struct {
 	Config Config
+
+	router *mux.Router
+
 	// TODO(remy): storage connection.
 }
 
-// Starts listening.
-func (s Runtime) Start() error {
-	// Prepares the router.
-	s.prepareAPIRouter()
+func NewRuntime() *Runtime {
+	rt := &Runtime{}
+	rt.router = mux.NewRouter()
+	rt.readConfig()
+	return rt
+}
 
-	s.prepareStaticRouter()
+// Starts listening.
+func (r *Runtime) Start() error {
+	// Prepares the router serving the static pages and assets.
+	r.prepareStaticRouter()
+
+	// Handles static routes
+	http.Handle("/", r.router)
 
 	// Starts listening.
-	err := http.ListenAndServe(s.Config.ListenAddr, nil)
+	err := http.ListenAndServe(r.Config.ListenAddr, nil)
 	return err
 }
 
-// prepareRouter creates the router to use
-// to answer http requests.
-func (s Runtime) prepareAPIRouter() {
-	router := mux.NewRouter()
-
-	http.Handle("/api", router)
+func (r *Runtime) AddApi(pattern string, handler http.Handler) {
+	r.router.PathPrefix("/api").Subrouter().Handle(pattern, handler)
 }
 
-func (s Runtime) prepareStaticRouter() {
+func (r *Runtime) prepareStaticRouter() {
 	// Add the final route, the static assets and pages.
-	router := mux.NewRouter()
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir(s.Config.PublicDir)))
-	http.Handle("/", router)
-	Info("Serving static from directory", s.Config.PublicDir)
+	r.router.PathPrefix("/").Handler(http.FileServer(http.Dir(r.Config.PublicDir)))
+	Info("Serving static from directory", r.Config.PublicDir)
+}
+
+// readConfig reads in the environment var
+// the configuration to start the runtime.
+func (r *Runtime) readConfig() {
+	err := envconfig.Init(&r.Config)
+	if err != nil {
+		Error("While reading the configuration:", err.Error())
+	}
 }

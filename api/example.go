@@ -1,0 +1,15 @@
+package api
+
+import (
+	"net/http"
+
+	"bitbucket.org/parking/runtime"
+)
+
+type Example struct {
+	Runtime *runtime.Runtime
+}
+
+func (c Example) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("example route"))
+}

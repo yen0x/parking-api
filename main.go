@@ -7,36 +7,26 @@
 package main
 
 import (
+	"bitbucket.org/parking/api"
 	. "bitbucket.org/parking/logger"
 	"bitbucket.org/parking/runtime"
-
-	"github.com/vrischmann/envconfig"
 )
 
 func main() {
-	Info("Starting the server.")
-	config, err := readConfig()
-	if err != nil {
-		Error(err.Error())
-		return
-	}
+	Info("Starting the runtime.")
 
-	Info("Listening on", config.ListenAddr)
+	rt := runtime.NewRuntime()
 
-	server := runtime.Server{
-		Config: config,
-	}
+	declareApiRoutes(rt)
 
-	server.Start()
+	Info("Listening on", rt.Config.ListenAddr)
+
+	err := rt.Start()
 	if err != nil {
 		Error(err.Error())
 	}
 }
 
-// readConfig reads in the environment var
-// the configuration to start the runtime.
-func readConfig() (runtime.Config, error) {
-	config := runtime.Config{}
-	err := envconfig.Init(&config)
-	return config, err
+func declareApiRoutes(rt *runtime.Runtime) {
+	rt.AddApi("/example", api.Example{rt})
 }
