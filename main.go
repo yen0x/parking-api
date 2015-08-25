@@ -28,7 +28,9 @@ func main() {
 	}
 
 	server.Start()
-	return
+	if err != nil {
+		Error(err.Error())
+	}
 }
 
 // readConfig reads in the environment var
