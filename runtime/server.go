@@ -9,7 +9,7 @@ package runtime
 import (
 	"net/http"
 
-	//. "bitbucket.org/parking/logger"
+	. "bitbucket.org/parking/logger"
 
 	"github.com/gorilla/mux"
 )
@@ -21,8 +21,9 @@ type Server struct {
 // Starts listening.
 func (s Server) Start() error {
 	// Prepares the router.
-	router := prepareRouter()
-	http.Handle("/", router)
+	s.prepareAPIRouter()
+
+	s.prepareStaticRouter()
 
 	// Starts listening.
 	err := http.ListenAndServe(s.Config.ListenAddr, nil)
@@ -31,8 +32,16 @@ func (s Server) Start() error {
 
 // prepareRouter creates the router to use
 // to answer http requests.
-func prepareRouter() *mux.Router {
-	r := mux.NewRouter()
+func (s Server) prepareAPIRouter() {
+	router := mux.NewRouter()
 
-	return r
+	http.Handle("/api", router)
+}
+
+func (s Server) prepareStaticRouter() {
+	// Add the final route, the static assets and pages.
+	router := mux.NewRouter()
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir(s.Config.PublicDir)))
+	http.Handle("/", router)
+	Info("Serving static from directory", s.Config.PublicDir)
 }

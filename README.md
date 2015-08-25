@@ -1,5 +1,14 @@
 # parking backend
 
+## Build and run
+
+In the directory :
+
+``
+go build
+./parking
+``
+
 ## Configuration
 
 To be docker-proof and to quickly run the binary, the runtime

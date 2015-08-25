@@ -11,13 +11,13 @@ import (
 )
 
 func Error(data ...interface{}) {
-	log.Println("Error:", data)
+	log.Println("Error", data)
 }
 
 func Warning(data ...interface{}) {
-	log.Println("Warning:", data)
+	log.Println("Warning", data)
 }
 
 func Info(data ...interface{}) {
-	log.Println("Info:", data)
+	log.Println("Info", data)
 }
