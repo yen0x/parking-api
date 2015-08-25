@@ -14,12 +14,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Server struct {
+type Runtime struct {
 	Config Config
+	// TODO(remy): storage connection.
 }
 
 // Starts listening.
-func (s Server) Start() error {
+func (s Runtime) Start() error {
 	// Prepares the router.
 	s.prepareAPIRouter()
 
@@ -32,13 +33,13 @@ func (s Server) Start() error {
 
 // prepareRouter creates the router to use
 // to answer http requests.
-func (s Server) prepareAPIRouter() {
+func (s Runtime) prepareAPIRouter() {
 	router := mux.NewRouter()
 
 	http.Handle("/api", router)
 }
 
-func (s Server) prepareStaticRouter() {
+func (s Runtime) prepareStaticRouter() {
 	// Add the final route, the static assets and pages.
 	router := mux.NewRouter()
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir(s.Config.PublicDir)))
