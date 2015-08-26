@@ -9,7 +9,7 @@ It is needed to update/install/remove dependencies into this directory.
 To setup `godep`:
 
 ```
-go get github.com/tools/godep
+go get -u github.com/tools/godep
 ```
 
 Godeps stores its own metadata into the `Godeps` directory.
@@ -19,9 +19,11 @@ Godeps stores its own metadata into the `Godeps` directory.
 In the directory (after having `go get godep`):
 
 ``
-GO15VENDOREXPERIMENT=1 godep restore
-GO15VENDOREXPERIMENT=1 go build
+
+godep restore
+go build
 ./parking
+
 ``
 
 ## Configuration
@@ -33,14 +35,18 @@ for the parameters.
 Example with default parameters:
 
 ```
-GO15VENDOREXPERIMENT=1 go build
+
+go build
 ./parking 
+
 ```
 
 Example with a parameter set:
 
 ```
-GO15VENDOREXPERIMENT=1 go build
+
+go build
 ADDR=localhost:9000 ./parking
+
 ```
 
