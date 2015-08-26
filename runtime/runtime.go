@@ -9,8 +9,8 @@ package runtime
 import (
 	"net/http"
 
-	"bitbucket.org/parking/db"
-	. "bitbucket.org/parking/logger"
+	"bitbucket.org/remeh/parking/db"
+	. "bitbucket.org/remeh/parking/logger"
 
 	"github.com/gorilla/mux"
 	"github.com/vrischmann/envconfig"

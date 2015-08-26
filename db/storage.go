@@ -9,7 +9,7 @@ package db
 import (
 	"database/sql"
 
-	. "bitbucket.org/parking/db/dao"
+	. "bitbucket.org/remeh/parking/db/dao"
 
 	_ "github.com/lib/pq"
 )

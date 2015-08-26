@@ -7,9 +7,9 @@
 package main
 
 import (
-	"bitbucket.org/parking/api"
-	. "bitbucket.org/parking/logger"
-	"bitbucket.org/parking/runtime"
+	"bitbucket.org/remeh/parking/api"
+	. "bitbucket.org/remeh/parking/logger"
+	"bitbucket.org/remeh/parking/runtime"
 )
 
 func main() {

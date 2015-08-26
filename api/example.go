@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"bitbucket.org/parking/runtime"
+	"bitbucket.org/remeh/parking/runtime"
 )
 
 type Example struct {

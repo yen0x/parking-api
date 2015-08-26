@@ -1,5 +1,5 @@
 {
-	"ImportPath": "bitbucket.org/parking",
+	"ImportPath": "bitbucket.org/remeh/parking",
 	"GoVersion": "go1.5",
 	"Packages": [
 		"./..."
