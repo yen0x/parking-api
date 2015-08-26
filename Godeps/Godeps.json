@@ -16,6 +16,10 @@
 			"Rev": "b269bd035a727d6c1081f76e7a239a1b00674c40"
 		},
 		{
+			"ImportPath": "github.com/pborman/uuid",
+			"Rev": "cccd189d45f7ac3368a0d127efb7f4d08ae0b655"
+		},
+		{
 			"ImportPath": "github.com/vrischmann/envconfig",
 			"Rev": "e4f615d158ed2bea636ca576237d177becd0207b"
 		}
