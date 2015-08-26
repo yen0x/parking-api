@@ -13,7 +13,7 @@ import (
 )
 
 type User struct {
-	Uid          uuid.UUID // UUID
+	Uid          uuid.UUID
 	Email        string
 	Firstname    string
 	Lastname     string

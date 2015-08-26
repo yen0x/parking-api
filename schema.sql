@@ -1,3 +1,4 @@
+-- Database init
 CREATE USER parking WITH UNENCRYPTED PASSWORD 'parking';
 CREATE DATABASE "parking";
 GRANT ALL ON DATABASE "parking" TO "parking";
@@ -5,6 +6,8 @@ GRANT ALL ON DATABASE "parking" TO "parking";
 -- Switch to the parking db as the parking user.
 \connect "parking";
 set role "parking";
+
+-- User
 
 CREATE TABLE "user" (
     "uid" text NOT NULL,
