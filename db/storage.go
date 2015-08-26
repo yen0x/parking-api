@@ -29,11 +29,18 @@ func (s *Storage) Init(connectionString string) (*sql.DB, error) {
 	s.Conn = dbase
 
 	// Creates all the DAOs of this storage.
-	s.createDAOs()
+	err = s.createDAOs()
+	if err != nil {
+		return nil, err
+	}
 
 	return dbase, s.Conn.Ping()
 }
 
-func (s *Storage) createDAOs() {
-	s.UserDAO = NewUserDAO(s.Conn)
+func (s *Storage) createDAOs() error {
+	var err error
+	if s.UserDAO, err = NewUserDAO(s.Conn); err != nil {
+		return err
+	}
+	return nil
 }
