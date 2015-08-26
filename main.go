@@ -1,6 +1,6 @@
 // Parking Backend
 //
-// Main.
+// Main
 //
 // 2015
 

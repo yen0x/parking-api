@@ -1,3 +1,9 @@
+// Parking Backend - DAO
+//
+// User DAO.
+//
+// 2015
+
 package dao
 
 import (
@@ -97,6 +103,7 @@ func (d *UserDAO) FindByEmail(email string) (model.User, error) {
 	return userFromRow(rows)
 }
 
+// userFromRow reads an user model from the current row.
 func userFromRow(rows *Rows) (model.User, error) {
 	var uid,
 		email,

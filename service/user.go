@@ -1,3 +1,9 @@
+// Parking Backend - Service
+//
+// All methods around users features.
+//
+// 2015
+
 package service
 
 import (
@@ -9,7 +15,8 @@ import (
 	"github.com/pborman/uuid"
 )
 
-// TODO(remy): comment
+// CreateUser tries to store a new user into the database. It creates the
+// uid of the users and returns it.
 func CreateUser(rt *runtime.Runtime, email, firstname, lastname string) (uuid.UUID, error) {
 	if rt == nil {
 		return []byte{}, nil

@@ -1,3 +1,9 @@
+// Parking Backend - Model
+//
+// User model.
+//
+// 2015
+
 package model
 
 import (

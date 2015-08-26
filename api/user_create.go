@@ -1,3 +1,9 @@
+// Parking Backend - API
+//
+// Controller to create an user.
+//
+// 2015
+
 package api
 
 import (
