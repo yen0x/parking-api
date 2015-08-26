@@ -1,0 +1,3 @@
+CREATE USER parking WITH UNENCRYPTED PASSWORD 'parking';
+CREATE DATABASE parking;
+GRANT ALL ON DATABASE parking TO parking;

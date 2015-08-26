@@ -9,6 +9,7 @@ package runtime
 import (
 	"net/http"
 
+	"bitbucket.org/parking/db"
 	. "bitbucket.org/parking/logger"
 
 	"github.com/gorilla/mux"
@@ -20,7 +21,7 @@ type Runtime struct {
 
 	router *mux.Router
 
-	// TODO(remy): storage connection.
+	Storage db.Storage
 }
 
 func NewRuntime() *Runtime {
@@ -32,6 +33,13 @@ func NewRuntime() *Runtime {
 
 // Starts listening.
 func (r *Runtime) Start() error {
+	// Opens the database connection.
+	Info("Opening the database connection.")
+	_, err := r.Storage.Init(r.Config.ConnString)
+	if err != nil {
+		return err
+	}
+
 	// Prepares the router serving the static pages and assets.
 	r.prepareStaticRouter()
 
@@ -39,7 +47,7 @@ func (r *Runtime) Start() error {
 	http.Handle("/", r.router)
 
 	// Starts listening.
-	err := http.ListenAndServe(r.Config.ListenAddr, nil)
+	err = http.ListenAndServe(r.Config.ListenAddr, nil)
 	return err
 }
 
