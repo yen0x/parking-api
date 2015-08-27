@@ -21,7 +21,6 @@ First you must play the `schema.sql` file into your PostgreSQL.
 In the directory (after having `go get godep`):
 
 ``
-
 godep restore
 go build
 ./parking

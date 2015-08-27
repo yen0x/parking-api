@@ -17,7 +17,7 @@ type Review struct {
 	CreationTime time.Time
 	// Author of the review.
 	AuthorId uuid.UUID
-	// User criticized
+	// Reviewed user.
 	UserId uuid.UUID
 	// [0;5]
 	Note int
