@@ -18,7 +18,8 @@ import (
 type ParkingDAO struct {
 	db *DB
 
-	insert *Stmt
+	insert     *Stmt
+	findByUser *Stmt
 }
 
 const (
@@ -52,7 +53,22 @@ func (d *ParkingDAO) initStmt() error {
 		return err
 	}
 
+	if d.findByUser, err = d.db.Prepare(`
+		SELECT ` + PARKING_FIELDS + `
+		FROM "parking"
+		WHERE user_id = $1
+	`); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func (d *ParkingDAO) FindByUser(user model.User) ([]model.Parking, error) {
+	return d.FindByUserId(user.Uid)
+}
+func (d *ParkingDAO) FindByUserId(uid uuid.UUID) ([]model.Parking, error) {
+	return readParkings(d.findByUser.Query(uid.String()))
 }
 
 func (d *ParkingDAO) Insert(parking model.Parking) (Result, error) {
@@ -71,6 +87,28 @@ func (d *ParkingDAO) Insert(parking model.Parking) (Result, error) {
 		parking.CreationTime,
 		parking.LastUpdate,
 	)
+}
+
+// readParkings fully reads (and closes) the given rows to return
+// the read parkings or an error if something wrong occurred.
+func readParkings(rows *Rows, err error) ([]model.Parking, error) {
+	result := make([]model.Parking, 0)
+
+	if err != nil || rows == nil {
+		return result, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		parking, err := parkingFromRow(rows)
+		if err != nil {
+			return result, err
+		}
+		result = append(result, parking)
+	}
+
+	return result, err
 }
 
 // parkingFromRow reads an parking model from the current row.
