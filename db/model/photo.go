@@ -7,8 +7,6 @@
 package model
 
 import (
-	"time"
-
 	"github.com/pborman/uuid"
 )
 
