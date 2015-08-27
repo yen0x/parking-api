@@ -24,3 +24,19 @@ CREATE TABLE "user" (
 CREATE UNIQUE INDEX ON "user" ("uid");
 CREATE INDEX ON "user" ("email");    
     
+-- Parking
+
+CREATE TABLE "parking" (
+    "uid" text NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "description" TEXT DEFAULT '',
+    "address" TEXT DEFAULT '',
+    "latitude" DOUBLE PRECISION DEFAULT 0.0,
+    "longitude" DOUBLE PRECISION DEFAULT 0.0,
+    "daily_price" TEXT DEFAULT '',
+    "creation_time" timestamp with time zone DEFAULT now(),
+    "last_update" timestamp with time zone
+);
+
+CREATE UNIQUE INDEX ON "parking" ("uid");
+CREATE INDEX ON "parking" ("user_id");
