@@ -17,7 +17,8 @@ import (
 type Storage struct {
 	Conn *sql.DB
 
-	UserDAO *UserDAO
+	UserDAO    *UserDAO
+	ParkingDAO *ParkingDAO
 }
 
 // Init opens a PostgreSQL connection with the given connectionString.
@@ -40,6 +41,9 @@ func (s *Storage) Init(connectionString string) (*sql.DB, error) {
 func (s *Storage) createDAOs() error {
 	var err error
 	if s.UserDAO, err = NewUserDAO(s.Conn); err != nil {
+		return err
+	}
+	if s.ParkingDAO, err = NewParkingDAO(s.Conn); err != nil {
 		return err
 	}
 	return nil
