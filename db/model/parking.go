@@ -24,6 +24,9 @@ type Parking struct {
 	Latitude  float64
 	Longitude float64
 
+	// FIXME(remy): maybe we should create a special type for money ?
+	DailyPrice string
+
 	CreationTime time.Time
 	LastUpdate   time.Time
 }
