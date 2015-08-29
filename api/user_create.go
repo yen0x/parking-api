@@ -23,14 +23,13 @@ type CreateUser struct {
 type CreateUserBody struct {
 	Email     string `json:"email"`
 	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
+	Password  string `json:"password"`
 }
 
 type CreateUserResp struct {
 	Uid       string `json:"uid"`
 	Email     string `json:"email"`
 	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
 }
 
 func (c CreateUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +47,7 @@ func (c CreateUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Parameters check.
 
-	if len(body.Email) == 0 || len(body.Firstname) == 0 || len(body.Lastname) == 0 {
+	if len(body.Email) == 0 || len(body.Firstname) == 0 {
 		w.WriteHeader(400)
 		return
 	}
@@ -68,7 +67,7 @@ func (c CreateUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Creates and stores the user.
 
-	uuid, err := service.CreateUser(c.Runtime, body.Email, body.Firstname, body.Lastname)
+	uuid, err := service.CreateUser(c.Runtime, body.Email, body.Firstname, body.Password)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
@@ -81,7 +80,6 @@ func (c CreateUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Uid:       uuid.String(),
 		Email:     body.Email,
 		Firstname: body.Firstname,
-		Lastname:  body.Lastname,
 	}
 	data, err = json.Marshal(resp)
 	if err != nil {

@@ -17,6 +17,8 @@ type User struct {
 	Email        string
 	Firstname    string
 	Lastname     string
+	Password     string
+	Salt         string
 	Gender       string // TODO(remy): GenderType enum
 	Phone        string
 	Address      string

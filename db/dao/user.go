@@ -1,6 +1,7 @@
 // Parking Backend - DAO
 //
 // User DAO.
+// Note that an won't have its password loaded.
 //
 // 2015
 
@@ -19,6 +20,7 @@ type UserDAO struct {
 	db *DB
 
 	insert      *Stmt
+	create      *Stmt
 	findByEmail *Stmt
 }
 
@@ -53,6 +55,21 @@ func (d *UserDAO) initStmt() error {
 		return err
 	}
 
+	if d.create, err = d.db.Prepare(`
+		INSERT INTO "user"
+		(
+			"uid",
+			"email",
+			"firstname",
+			"password",
+			"creation_time",
+			"last_update"
+		)
+		VALUES ($1, $2, $3, $4, $5, $6);
+	`); err != nil {
+		return err
+	}
+
 	if d.findByEmail, err = d.db.Prepare(`
 		SELECT ` + USER_FIELDS + ` 
 		FROM "user"
@@ -62,6 +79,17 @@ func (d *UserDAO) initStmt() error {
 	}
 
 	return nil
+}
+
+func (d *UserDAO) Create(uid, email, firstname, password string, creationTime time.Time) (Result, error) {
+	return d.create.Exec(
+		uid,
+		email,
+		firstname,
+		password,
+		creationTime,
+		creationTime,
+	)
 }
 
 func (d *UserDAO) Insert(user model.User) (Result, error) {
