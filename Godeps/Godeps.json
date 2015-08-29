@@ -1,9 +1,6 @@
 {
 	"ImportPath": "bitbucket.org/remeh/parking",
 	"GoVersion": "go1.5",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/gorilla/context",
@@ -25,6 +22,14 @@
 		{
 			"ImportPath": "github.com/vrischmann/envconfig",
 			"Rev": "e4f615d158ed2bea636ca576237d177becd0207b"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/bcrypt",
+			"Rev": "5c68cfdf2a545b5ff576c075b459d1fc0c606f82"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/blowfish",
+			"Rev": "5c68cfdf2a545b5ff576c075b459d1fc0c606f82"
 		}
 	]
 }
