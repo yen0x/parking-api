@@ -2,6 +2,7 @@ package api
 
 import (
 	"bitbucket.org/remeh/parking/runtime"
+	"bitbucket.org/remeh/parking/service"
 	"io/ioutil"
 	"net/http"
 )
@@ -24,4 +25,14 @@ func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 		return
 	}
+	body := CreateParkingBody{}
+	json.Unmarshal(data, &body)
+	uuid, err := service.CreateParking(c.Runtime, body.Address, body.Description, body.Price)
+	if err != nil {
+		Error(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	w.Write(uuid)
 }
