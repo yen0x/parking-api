@@ -7,7 +7,7 @@
 package service
 
 import (
-	"bitbucket.org/remeh/parking/model"
+	"bitbucket.org/remeh/parking/db/model"
 	"bitbucket.org/remeh/parking/runtime"
 	"github.com/pborman/uuid"
 	"time"

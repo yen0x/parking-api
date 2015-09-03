@@ -1,8 +1,11 @@
 package api
 
 import (
+	. "bitbucket.org/remeh/parking/logger"
 	"bitbucket.org/remeh/parking/runtime"
 	"bitbucket.org/remeh/parking/service"
+
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 )
@@ -14,7 +17,7 @@ type CreateParking struct {
 type CreateParkingBody struct {
 	Address     string `json"address"`
 	Description string `json"description"`
-	Price       int    `json"price"`
+	Price       string `json"price"`
 }
 
 func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
