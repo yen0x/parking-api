@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
+	//	"strconv"
 )
 
 type CreateParking struct {
@@ -17,12 +17,12 @@ type CreateParking struct {
 }
 
 type CreateParkingBody struct {
-	Address     string `json"address"`
-	Description string `json"description"`
-	Latitude    string `json"latitude"`
-	Longitude   string `json"longitude"`
-	Price       string `json"price"`
-	User        string `json"user"`
+	Address     string  `json"address"`
+	Description string  `json"description"`
+	Latitude    float64 `json"latitude"`
+	Longitude   float64 `json"longitude"`
+	Price       string  `json"price"`
+	User        string  `json"user"`
 }
 
 type CreateParkingResp struct {
@@ -40,10 +40,10 @@ func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	body := CreateParkingBody{}
 	json.Unmarshal(data, &body)
 	fmt.Println(body)
-	latitude, err := strconv.ParseFloat(body.Latitude, 64)
-	longitude, err := strconv.ParseFloat(body.Longitude, 64)
+	//	latitude, err := strconv.ParseFloat(body.Latitude, 64)
+	//	longitude, err := strconv.ParseFloat(body.Longitude, 64)
 
-	uuid, err := service.CreateParking(c.Runtime, body.Address, body.Description, body.Price, body.User, latitude, longitude)
+	uuid, err := service.CreateParking(c.Runtime, body.Address, body.Description, body.Price, body.User, body.Latitude, body.Longitude)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
