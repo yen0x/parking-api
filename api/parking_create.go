@@ -6,8 +6,10 @@ import (
 	"bitbucket.org/remeh/parking/service"
 
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 type CreateParking struct {
@@ -17,7 +19,14 @@ type CreateParking struct {
 type CreateParkingBody struct {
 	Address     string `json"address"`
 	Description string `json"description"`
+	Latitude    string `json"latitude"`
+	Longitude   string `json"longitude"`
 	Price       string `json"price"`
+	User        string `json"user"`
+}
+
+type CreateParkingResp struct {
+	Uid string `json:"uid"`
 }
 
 func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -30,12 +39,21 @@ func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	body := CreateParkingBody{}
 	json.Unmarshal(data, &body)
-	uuid, err := service.CreateParking(c.Runtime, body.Address, body.Description, body.Price)
+	fmt.Println(body)
+	latitude, err := strconv.ParseFloat(body.Latitude, 64)
+	longitude, err := strconv.ParseFloat(body.Longitude, 64)
+
+	uuid, err := service.CreateParking(c.Runtime, body.Address, body.Description, body.Price, body.User, latitude, longitude)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
 		return
 	}
 
-	w.Write(uuid)
+	resp := CreateParkingResp{
+		Uid: uuid.String(),
+	}
+	data, err = json.Marshal(resp)
+	w.WriteHeader(http.StatusOK)
+	w.Write(data)
 }

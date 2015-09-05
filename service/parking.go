@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func CreateParking(rt *runtime.Runtime, address, description, price string) (uuid.UUID, error) {
+func CreateParking(rt *runtime.Runtime, address, description, price, user string, latitude, longitude float64) (uuid.UUID, error) {
 	if rt == nil {
 		return []byte{}, nil
 	}
@@ -24,11 +24,11 @@ func CreateParking(rt *runtime.Runtime, address, description, price string) (uui
 
 	parking := model.Parking{
 		Uid:          uid,
-		UserId:       uuid.Parse("1"),
+		UserId:       uuid.Parse(user),
 		Description:  description,
 		Address:      address,
-		Latitude:     0.0,
-		Longitude:    0.0,
+		Latitude:     latitude,
+		Longitude:    longitude,
 		DailyPrice:   price,
 		CreationTime: now,
 		LastUpdate:   now,
