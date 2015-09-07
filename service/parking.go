@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func CreateParking(rt *runtime.Runtime, address, description, price, user string, latitude, longitude float64) (uuid.UUID, error) {
+func CreateParking(rt *runtime.Runtime, address, description, price, user, zip, city string, latitude, longitude float64) (uuid.UUID, error) {
 	if rt == nil {
 		return []byte{}, nil
 	}
@@ -27,6 +27,8 @@ func CreateParking(rt *runtime.Runtime, address, description, price, user string
 		UserId:       uuid.Parse(user),
 		Description:  description,
 		Address:      address,
+		Zip:          zip,
+		City:         city,
 		Latitude:     latitude,
 		Longitude:    longitude,
 		DailyPrice:   price,

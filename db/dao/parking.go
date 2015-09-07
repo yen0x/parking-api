@@ -27,6 +27,8 @@ const (
 				      "parking"."user_id",
 				      "parking"."description",
 				      "parking"."address",
+				      "parking"."zip",
+				      "parking"."city",
 				      "parking"."latitude",
 				      "parking"."longitude",
 				      "parking"."daily_price",
@@ -48,7 +50,7 @@ func (d *ParkingDAO) initStmt() error {
 	if d.insert, err = d.db.Prepare(`
 		INSERT INTO "parking"
 		(` + insertFields("parking", PARKING_FIELDS) + `)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
 	`); err != nil {
 		return err
 	}
@@ -81,6 +83,8 @@ func (d *ParkingDAO) Insert(parking model.Parking) (Result, error) {
 		parking.UserId.String(),
 		parking.Description,
 		parking.Address,
+		parking.Zip,
+		parking.City,
 		parking.Latitude,
 		parking.Longitude,
 		parking.DailyPrice,

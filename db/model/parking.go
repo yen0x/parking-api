@@ -19,6 +19,8 @@ type Parking struct {
 
 	Description string
 	Address     string
+	Zip         string
+	City        string
 
 	// FIXME(remy): are float64 enough ?
 	Latitude  float64

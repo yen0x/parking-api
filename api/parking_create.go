@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	//	"strconv"
 )
 
 type CreateParking struct {
@@ -18,6 +17,8 @@ type CreateParking struct {
 
 type CreateParkingBody struct {
 	Address     string  `json"address"`
+	Zip         string  `json"zip"`
+	City        string  `json"city"`
 	Description string  `json"description"`
 	Latitude    float64 `json"latitude"`
 	Longitude   float64 `json"longitude"`
@@ -43,7 +44,7 @@ func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//	latitude, err := strconv.ParseFloat(body.Latitude, 64)
 	//	longitude, err := strconv.ParseFloat(body.Longitude, 64)
 
-	uuid, err := service.CreateParking(c.Runtime, body.Address, body.Description, body.Price, body.User, body.Latitude, body.Longitude)
+	uuid, err := service.CreateParking(c.Runtime, body.Address, body.Description, body.Price, body.User, body.Zip, body.City, body.Latitude, body.Longitude)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)

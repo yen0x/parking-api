@@ -32,6 +32,8 @@ CREATE TABLE "parking" (
     "user_id" TEXT NOT NULL,
     "description" TEXT DEFAULT '',
     "address" TEXT DEFAULT '',
+    "zip" TEXT DEFAULT '',
+    "city" TEXT DEFAULT '',
     "latitude" DOUBLE PRECISION DEFAULT 0.0,
     "longitude" DOUBLE PRECISION DEFAULT 0.0,
     "daily_price" TEXT DEFAULT '',
