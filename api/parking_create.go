@@ -23,7 +23,7 @@ type CreateParkingBody struct {
 	Latitude    float64 `json"latitude"`
 	Longitude   float64 `json"longitude"`
 	Price       string  `json"price"`
-	User        string  `json"user"`
+	Email       string  `json"email"` // FIXME(remy): won't be useful as soon as we have a session token
 }
 
 type CreateParkingResp struct {
@@ -40,11 +40,40 @@ func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	body := CreateParkingBody{}
 	json.Unmarshal(data, &body)
+
 	fmt.Println(body)
 	//	latitude, err := strconv.ParseFloat(body.Latitude, 64)
 	//	longitude, err := strconv.ParseFloat(body.Longitude, 64)
 
-	uuid, err := service.CreateParking(c.Runtime, body.Address, body.Description, body.Price, body.User, body.Zip, body.City, body.Latitude, body.Longitude)
+	// FIXME(remy): won't be useful as soon as we have a session token
+	user, err := service.GetUser(c.Runtime, body.Email)
+
+	if err != nil {
+		Error(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	// Unknown user.
+
+	if len(user.Uid) == 0 {
+		w.WriteHeader(400)
+		return
+	}
+
+	// Checks that the form has been correctly filled.
+
+	if len(body.Address) == 0 ||
+		len(body.Zip) == 0 ||
+		len(body.City) == 0 ||
+		len(body.Description) == 0 ||
+		len(body.Price) == 0 {
+		w.WriteHeader(400)
+		return
+
+	}
+
+	uuid, err := service.CreateParking(c.Runtime, user, body.Address, body.Description, body.Price, body.Zip, body.City, body.Latitude, body.Longitude)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)

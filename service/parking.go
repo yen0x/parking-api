@@ -16,7 +16,7 @@ import (
 	"github.com/pborman/uuid"
 )
 
-func CreateParking(rt *runtime.Runtime, address, description, price, user, zip, city string, latitude, longitude float64) (uuid.UUID, error) {
+func CreateParking(rt *runtime.Runtime, user model.User, address, description, price, zip, city string, latitude, longitude float64) (uuid.UUID, error) {
 	if rt == nil {
 		return []byte{}, nil
 	}
@@ -27,7 +27,7 @@ func CreateParking(rt *runtime.Runtime, address, description, price, user, zip, 
 
 	parking := model.Parking{
 		Uid:          uid,
-		UserId:       uuid.Parse(user),
+		UserId:       user.Uid,
 		Description:  description,
 		Address:      address,
 		Zip:          zip,
