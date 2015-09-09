@@ -20,6 +20,8 @@ type ListParking struct {
 type listParkingEntry struct {
 	Uid         string  `json:"uid"`
 	Address     string  `json"address"`
+	Zip         string  `json:"zip"`
+	City        string  `json:"city"`
 	Description string  `json"description"`
 	Latitude    float64 `json"latitude"`
 	Longitude   float64 `json"longitude"`
@@ -89,6 +91,8 @@ func (c ListParking) buildEntry(parking model.Parking) listParkingEntry {
 		Description: parking.Description,
 		Latitude:    parking.Latitude,
 		Longitude:   parking.Longitude,
+		Zip:         parking.Zip,
+		City:        parking.City,
 		Price:       parking.DailyPrice,
 	}
 }
