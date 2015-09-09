@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"bitbucket.org/remeh/parking/db/model"
-	. "bitbucket.org/remeh/parking/logger"
 	"bitbucket.org/remeh/parking/runtime"
 
 	"github.com/pborman/uuid"

@@ -60,7 +60,7 @@ func (d *ParkingDAO) initStmt() error {
 		SELECT ` + PARKING_FIELDS + `
 		FROM "parking"
 		WHERE
-			"latitude" >= $1 AND "latitude" <= $3
+			"latitude" <= $1 AND "latitude" >= $3
 			AND
 			"longitude" >= $2 AND "longitude" <= $4
 	`); err != nil {
