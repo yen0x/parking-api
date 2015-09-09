@@ -20,6 +20,7 @@ type ParkingDAO struct {
 
 	insert     *Stmt
 	findByUser *Stmt
+	findInArea *Stmt
 }
 
 const (
@@ -55,6 +56,17 @@ func (d *ParkingDAO) initStmt() error {
 		return err
 	}
 
+	if d.findInArea, err = d.db.Prepare(`
+		SELECT ` + PARKING_FIELDS + `
+		FROM "parking"
+		WHERE
+			lat >= $1 AND lat <= $3
+			AND
+			lon >= $2 AND lon <= $4
+	`); err != nil {
+		return err
+	}
+
 	if d.findByUser, err = d.db.Prepare(`
 		SELECT ` + PARKING_FIELDS + `
 		FROM "parking"
@@ -64,6 +76,10 @@ func (d *ParkingDAO) initStmt() error {
 	}
 
 	return nil
+}
+
+func (d *ParkingDAO) FindInArea(topLeftLat, topLeftLon, bottomRightLat, bottomRightLon float64) ([]model.Parking, error) {
+	return readParkings(d.findInArea.Query(topLeftLat, topLeftLon, bottomRightLat, bottomRightLon))
 }
 
 func (d *ParkingDAO) FindByUser(user model.User) ([]model.Parking, error) {

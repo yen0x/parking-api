@@ -9,6 +9,7 @@ package service
 import (
 	"time"
 
+	"bitbucket.org/remeh/parking/db/model"
 	"bitbucket.org/remeh/parking/runtime"
 
 	"github.com/pborman/uuid"
@@ -44,6 +45,12 @@ func UserExists(rt *runtime.Runtime, email string) (bool, error) {
 	uDAO := rt.Storage.UserDAO
 	user, err := uDAO.FindByEmail(email)
 	return len(user.Uid) > 0, err
+}
+
+// GetUser returns an user from the database by an email.
+func GetUser(rt *runtime.Runtime, email string) (model.User, error) {
+	uDAO := rt.Storage.UserDAO
+	return uDAO.FindByEmail(email)
 }
 
 func cryptPassword(password string) (string, error) {
