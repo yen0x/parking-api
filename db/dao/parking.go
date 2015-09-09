@@ -137,6 +137,8 @@ func parkingFromRow(rows *Rows) (model.Parking, error) {
 		userId,
 		description,
 		address,
+		zip,
+		city,
 		dailyPrice string
 	var latitude,
 		longitude float64
@@ -148,6 +150,8 @@ func parkingFromRow(rows *Rows) (model.Parking, error) {
 		&userId,
 		&description,
 		&address,
+		&zip,
+		&city,
 		&latitude,
 		&longitude,
 		&dailyPrice,
@@ -160,6 +164,8 @@ func parkingFromRow(rows *Rows) (model.Parking, error) {
 		UserId:       uuid.Parse(userId),
 		Description:  description,
 		Address:      address,
+		Zip:          zip,
+		City:         city,
 		Latitude:     latitude,
 		Longitude:    longitude,
 		DailyPrice:   dailyPrice,

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"bitbucket.org/remeh/parking/db/model"
+	. "bitbucket.org/remeh/parking/logger"
 	"bitbucket.org/remeh/parking/runtime"
 
 	"github.com/pborman/uuid"
@@ -84,5 +85,9 @@ func computeArea(lat, lon, width, height float64) (float64, float64, float64, fl
 	offLat := width / earthRadius
 	offLon := height / (earthRadius * math.Cos(math.Pi*lat/float64(180)))
 
-	return lat - offLat, lon - offLon, lat + offLat, lon + offLat
+	// reconvert
+	dLat := offLat * 180 / math.Pi
+	dLon := offLon * 180 / math.Pi
+
+	return lat + dLat, lon - dLon, lat - dLat, lon + dLat
 }

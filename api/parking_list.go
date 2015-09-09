@@ -19,20 +19,20 @@ type ListParking struct {
 
 type listParkingEntry struct {
 	Uid         string  `json:"uid"`
-	Address     string  `json"address"`
+	Address     string  `json:"address"`
 	Zip         string  `json:"zip"`
 	City        string  `json:"city"`
-	Description string  `json"description"`
-	Latitude    float64 `json"latitude"`
-	Longitude   float64 `json"longitude"`
-	Price       string  `json"price"`
+	Description string  `json:"description"`
+	Latitude    float64 `json:"latitude"`
+	Longitude   float64 `json:"longitude"`
+	Price       string  `json:"price"`
 }
 
 const (
 	// Offset on X around the selected pos when looking for a parking (unit: meters)
-	OFFSET_X = 250
+	OFFSET_X = 500.0
 	// Offset on Y aroudn the selected pos when looking for a parking (unit: meters)
-	OFFSET_Y = 250
+	OFFSET_Y = 500.0
 )
 
 func (c ListParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {

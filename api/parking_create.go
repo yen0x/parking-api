@@ -42,8 +42,6 @@ func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(data, &body)
 
 	fmt.Println(body)
-	//	latitude, err := strconv.ParseFloat(body.Latitude, 64)
-	//	longitude, err := strconv.ParseFloat(body.Longitude, 64)
 
 	// FIXME(remy): won't be useful as soon as we have a session token
 	user, err := service.GetUser(c.Runtime, body.Email)

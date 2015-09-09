@@ -21,3 +21,7 @@ func Warning(data ...interface{}) {
 func Info(data ...interface{}) {
 	log.Println("Info", data)
 }
+
+func Debug(data ...interface{}) {
+	log.Println("Debug", data)
+}
