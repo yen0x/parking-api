@@ -65,14 +65,17 @@ func (c Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// return some info to the browser
+	// generates a new session for this user.
 
-	// TODO(remy): generate a token and store them either in base or ram
+	session := c.Runtime.SessionStorage.New(user)
+
+	// return some info to the browser
 
 	resp := loginResp{
 		Uid:       user.Uid.String(),
 		Email:     user.Email,
 		Firstname: user.Firstname,
+		Token:     session.Token,
 	}
 
 	data, err = json.Marshal(resp)

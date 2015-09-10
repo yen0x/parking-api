@@ -21,6 +21,8 @@ type Runtime struct {
 
 	router *mux.Router
 
+	SessionStorage SessionStorage
+
 	Storage db.Storage
 }
 
@@ -28,6 +30,10 @@ func NewRuntime() *Runtime {
 	rt := &Runtime{}
 	rt.router = mux.NewRouter()
 	rt.readConfig()
+
+	ramSessionStorage := CreateRAMSessionStorage()
+	rt.SessionStorage = &ramSessionStorage
+
 	return rt
 }
 
