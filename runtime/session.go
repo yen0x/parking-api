@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"bitbucket.org/remeh/parking/db/model"
+	. "bitbucket.org/remeh/parking/logger"
 )
 
 var runes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321")
@@ -50,6 +51,9 @@ func (s *RAMSessionStorage) New(user model.User) Session {
 	}
 
 	s.sessions[session.Token] = session
+
+	Debug(len(s.sessions), "session tokens in RAM.")
+
 	return session
 }
 

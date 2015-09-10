@@ -1,5 +1,5 @@
 // Parking Backend - API
-// Auth check for a logged in user.
+// Adapter to log a request on a route.
 // 2015
 
 package api
@@ -18,9 +18,6 @@ type LogAdapter struct {
 }
 
 func (a LogAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// TODO(remy): do the auth check
-	//if 403, return
-
 	// then propagate to the next handler if no 403 has been returned.
 	sWriter := &StatusWriter{w, 200}
 	a.handler.ServeHTTP(sWriter, r)

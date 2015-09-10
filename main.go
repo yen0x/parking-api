@@ -7,7 +7,7 @@
 package main
 
 import (
-	"bitbucket.org/remeh/parking/api"
+	. "bitbucket.org/remeh/parking/api"
 	. "bitbucket.org/remeh/parking/logger"
 	"bitbucket.org/remeh/parking/runtime"
 )
@@ -28,12 +28,11 @@ func main() {
 }
 
 func declareApiRoutes(rt *runtime.Runtime) {
-	rt.AddApi("/example", api.Example{rt})
+	rt.AddApi("/example", LogRoute(rt, Example{rt}))
 
-	rt.AddApi("/user/create", api.CreateUser{rt})
-	rt.AddApi("/login", api.Login{rt})
+	rt.AddApi("/user/create", LogRoute(rt, CreateUser{rt}))
+	rt.AddApi("/login", LogRoute(rt, Login{rt}))
 
-	rt.AddApi("/parking/create", api.CreateParking{rt})
-
-	rt.AddApi("/parking/search/area/{lat},{lon}", api.ListParking{rt})
+	rt.AddApi("/parking/create", AuthRoute(rt, CreateParking{rt}))
+	rt.AddApi("/parking/search/area/{lat},{lon}", AuthRoute(rt, ListParking{rt}))
 }
