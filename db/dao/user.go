@@ -19,9 +19,10 @@ import (
 type UserDAO struct {
 	db *DB
 
-	insert      *Stmt
-	create      *Stmt
-	findByEmail *Stmt
+	insert             *Stmt
+	create             *Stmt
+	getCryptedPassword *Stmt
+	findByEmail        *Stmt
 }
 
 const (
@@ -70,6 +71,14 @@ func (d *UserDAO) initStmt() error {
 		return err
 	}
 
+	if d.getCryptedPassword, err = d.db.Prepare(`
+		SELECT "user"."password"
+		FROM "user"
+		WHERE "user"."uid" = $1
+	`); err != nil {
+		return err
+	}
+
 	if d.findByEmail, err = d.db.Prepare(`
 		SELECT ` + USER_FIELDS + ` 
 		FROM "user"
@@ -108,6 +117,22 @@ func (d *UserDAO) Insert(user model.User) (Result, error) {
 		user.CreationTime,
 		user.LastUpdate,
 	)
+}
+
+func (d *UserDAO) GetCryptedPassword(user model.User) (string, error) {
+	rows, err := d.getCryptedPassword.Query(user.Uid.String())
+
+	if err != nil || rows == nil {
+		return "", err
+	}
+
+	defer rows.Close()
+
+	var pwd string
+	if rows.Next() {
+		err = rows.Scan(&pwd)
+	}
+	return pwd, err
 }
 
 func (d *UserDAO) FindByEmail(email string) (model.User, error) {

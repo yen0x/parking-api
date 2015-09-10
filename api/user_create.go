@@ -42,7 +42,7 @@ func (c CreateUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body := CreateUserBody{}
+	var body CreateUserBody
 	json.Unmarshal(data, &body)
 
 	// Parameters check.

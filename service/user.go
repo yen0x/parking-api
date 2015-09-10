@@ -39,6 +39,22 @@ func CreateUser(rt *runtime.Runtime, email, firstname, password string) (uuid.UU
 	return uid, err
 }
 
+// TODO(remy): comment.
+func CheckUserPassword(rt *runtime.Runtime, email, password string) (bool, model.User, error) {
+	user, err := GetUser(rt, email)
+	if err != nil {
+		return false, user, err
+	}
+
+	crypted, err := rt.Storage.UserDAO.GetCryptedPassword(user)
+	if err != nil {
+		return false, user, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(crypted), []byte(password))
+	return err == nil, user, nil
+}
+
 // UserExists returns whether or not an user already uses
 // the given email.
 func UserExists(rt *runtime.Runtime, email string) (bool, error) {
