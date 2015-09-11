@@ -75,8 +75,14 @@ func (c Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Uid:       user.Uid.String(),
 		Email:     user.Email,
 		Firstname: user.Firstname,
-		Token:     session.Token,
 	}
+
+	// sets the cookie
+	cookie := &http.Cookie{
+		Name:  COOKIE_TOKEN_KEY,
+		Value: session.Token,
+	}
+	http.SetCookie(w, cookie)
 
 	data, err = json.Marshal(resp)
 	if err != nil {
