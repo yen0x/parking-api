@@ -36,7 +36,8 @@ CREATE TABLE "parking" (
     "city" TEXT DEFAULT '',
     "latitude" DOUBLE PRECISION DEFAULT 0.0,
     "longitude" DOUBLE PRECISION DEFAULT 0.0,
-    "daily_price" TEXT DEFAULT '',
+    "daily_price" integer DEFAULT 0,
+    "currency" text default 'EUR',
     "creation_time" timestamp with time zone DEFAULT now(),
     "last_update" timestamp with time zone
 );

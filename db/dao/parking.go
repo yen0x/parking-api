@@ -33,6 +33,7 @@ const (
 				      "parking"."latitude",
 				      "parking"."longitude",
 				      "parking"."daily_price",
+					  "parking"."currency",
 				      "parking"."creation_time",
 				      "parking"."last_update"`
 )
@@ -51,7 +52,7 @@ func (d *ParkingDAO) initStmt() error {
 	if d.insert, err = d.db.Prepare(`
 		INSERT INTO "parking"
 		(` + insertFields("parking", PARKING_FIELDS) + `)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
 	`); err != nil {
 		return err
 	}
@@ -104,6 +105,7 @@ func (d *ParkingDAO) Insert(parking model.Parking) (Result, error) {
 		parking.Latitude,
 		parking.Longitude,
 		parking.DailyPrice,
+		parking.Currency,
 		parking.CreationTime,
 		parking.LastUpdate,
 	)
@@ -139,9 +141,10 @@ func parkingFromRow(rows *Rows) (model.Parking, error) {
 		address,
 		zip,
 		city,
-		dailyPrice string
+		currency string
 	var latitude,
 		longitude float64
+	var dailyPrice int
 	var creationTime,
 		lastUpdate time.Time
 
@@ -155,6 +158,7 @@ func parkingFromRow(rows *Rows) (model.Parking, error) {
 		&latitude,
 		&longitude,
 		&dailyPrice,
+		&currency,
 		&creationTime,
 		&lastUpdate,
 	)
@@ -169,6 +173,7 @@ func parkingFromRow(rows *Rows) (model.Parking, error) {
 		Latitude:     latitude,
 		Longitude:    longitude,
 		DailyPrice:   dailyPrice,
+		Currency:     currency,
 		CreationTime: creationTime,
 		LastUpdate:   lastUpdate,
 	}, err

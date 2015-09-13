@@ -17,14 +17,10 @@ type AuthAdapter struct {
 	handler http.Handler
 }
 
-const (
-	COOKIE_TOKEN_KEY = "t"
-)
-
 func (a AuthAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// gets the cookie in the request
 
-	cookie, err := r.Cookie(COOKIE_TOKEN_KEY)
+	cookie, err := r.Cookie(runtime.COOKIE_TOKEN_KEY)
 	if err != nil {
 		w.WriteHeader(403)
 		return
@@ -32,8 +28,8 @@ func (a AuthAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// ensure that this session exists
 
-	session := a.Runtime.SessionStorage.Get(cookie.Value)
-	if len(session.User.Uid) == 0 {
+	_, exists := a.Runtime.SessionStorage.Get(cookie.Value)
+	if !exists {
 		w.WriteHeader(403)
 		return
 	}

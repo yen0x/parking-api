@@ -25,7 +25,8 @@ type listParkingEntry struct {
 	Description string  `json:"description"`
 	Latitude    float64 `json:"latitude"`
 	Longitude   float64 `json:"longitude"`
-	Price       string  `json:"price"`
+	Price       int     `json:"price"`
+	Currency    string  `json:"currency"`
 }
 
 const (
@@ -95,5 +96,6 @@ func (c ListParking) buildEntry(parking model.Parking) listParkingEntry {
 		Zip:         parking.Zip,
 		City:        parking.City,
 		Price:       parking.DailyPrice,
+		Currency:    parking.Currency,
 	}
 }

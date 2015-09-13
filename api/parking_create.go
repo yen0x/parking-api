@@ -6,7 +6,6 @@ import (
 	"bitbucket.org/remeh/parking/service"
 
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -16,14 +15,13 @@ type CreateParking struct {
 }
 
 type CreateParkingBody struct {
-	Address     string  `json"address"`
-	Zip         string  `json"zip"`
-	City        string  `json"city"`
-	Description string  `json"description"`
-	Latitude    float64 `json"latitude"`
-	Longitude   float64 `json"longitude"`
-	Price       string  `json"price"`
-	Email       string  `json"email"` // FIXME(remy): won't be useful as soon as we have a session token
+	Address     string  `json:"address"`
+	Zip         string  `json:"zip"`
+	City        string  `json:"city"`
+	Description string  `json:"description"`
+	Latitude    float64 `json:"latitude"`
+	Longitude   float64 `json:"longitude"`
+	Price       int     `json:"price"`
 }
 
 type CreateParkingResp struct {
@@ -32,19 +30,14 @@ type CreateParkingResp struct {
 
 func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data, err := ioutil.ReadAll(r.Body)
-
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
 		return
 	}
+
 	body := CreateParkingBody{}
-	json.Unmarshal(data, &body)
-
-	fmt.Println(body)
-
-	// FIXME(remy): won't be useful as soon as we have a session token
-	user, err := service.GetUser(c.Runtime, body.Email)
+	err = json.Unmarshal(data, &body)
 
 	if err != nil {
 		Error(err)
@@ -52,10 +45,9 @@ func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Unknown user.
-
-	if len(user.Uid) == 0 {
-		w.WriteHeader(400)
+	session, exists := c.Runtime.SessionStorage.GetFromRequest(r)
+	if !exists {
+		w.WriteHeader(403)
 		return
 	}
 
@@ -65,13 +57,12 @@ func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		len(body.Zip) == 0 ||
 		len(body.City) == 0 ||
 		len(body.Description) == 0 ||
-		len(body.Price) == 0 {
+		body.Price == 0 {
 		w.WriteHeader(400)
 		return
-
 	}
 
-	uuid, err := service.CreateParking(c.Runtime, user, body.Address, body.Description, body.Price, body.Zip, body.City, body.Latitude, body.Longitude)
+	uuid, err := service.CreateParking(c.Runtime, session.User, body.Address, body.Description, body.Zip, body.City, "EUR", body.Price, body.Latitude, body.Longitude)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
@@ -81,6 +72,7 @@ func (c CreateParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	resp := CreateParkingResp{
 		Uid: uuid.String(),
 	}
+
 	data, err = json.Marshal(resp)
 	w.WriteHeader(http.StatusOK)
 	w.Write(data)
