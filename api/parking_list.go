@@ -39,25 +39,41 @@ const (
 func (c ListParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// compute a box within which we want to find some parkings
 	vars := mux.Vars(r)
-	pLat, pLon := vars["lat"], vars["lon"]
-	if len(pLat) == 0 || len(pLon) == 0 {
+	pNELat, pNELon := vars["nelat"], vars["nelon"]
+	pSWLat, pSWLon := vars["swlat"], vars["swlon"]
+
+	if len(pNELat) == 0 || len(pNELon) == 0 ||
+		len(pSWLat) == 0 || len(pSWLon) == 0 {
 		w.WriteHeader(400)
 		return
 	}
 
-	lon, err := strconv.ParseFloat(pLon, 64)
+	// north eat
+
+	neLon, err := strconv.ParseFloat(pNELon, 64)
 	if err != nil {
 		w.WriteHeader(400)
 		return
 	}
-	lat, err := strconv.ParseFloat(pLat, 64)
+	neLat, err := strconv.ParseFloat(pNELat, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	swLon, err := strconv.ParseFloat(pSWLon, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		return
+	}
+	swLat, err := strconv.ParseFloat(pSWLat, 64)
 	if err != nil {
 		w.WriteHeader(400)
 		return
 	}
 
 	// compute an area with the given POI
-	parkings, err := service.GetParkingsInSurroundingArea(c.Runtime, lat, lon, OFFSET_X, OFFSET_Y)
+	parkings, err := service.GetParkingsInSurroundingArea(c.Runtime, neLat, neLon, swLat, swLon)
 	if err != nil {
 		Error(err.Error())
 		w.WriteHeader(500)

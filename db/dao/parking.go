@@ -63,7 +63,7 @@ func (d *ParkingDAO) initStmt() error {
 		WHERE
 			"latitude" <= $1 AND "latitude" >= $3
 			AND
-			"longitude" >= $2 AND "longitude" <= $4
+			"longitude" >= $4 AND "longitude" <= $2
 	`); err != nil {
 		return err
 	}
