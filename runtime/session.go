@@ -9,6 +9,7 @@ package runtime
 
 import (
 	"math/rand"
+	"net/http"
 	"time"
 
 	"bitbucket.org/remeh/parking/db/model"
@@ -29,7 +30,8 @@ type Session struct {
 
 type SessionStorage interface {
 	New(model.User) Session
-	Get(string) Session
+	Get(string) (Session, bool)
+	GetFromRequest(*http.Request) (Session, bool)
 }
 
 // Sessions stored in RAM.
@@ -57,8 +59,20 @@ func (s *RAMSessionStorage) New(user model.User) Session {
 	return session
 }
 
-func (s RAMSessionStorage) Get(token string) Session {
-	return s.sessions[token]
+func (s RAMSessionStorage) Get(token string) (Session, bool) {
+	session := s.sessions[token]
+	return session, len(session.User.Uid) > 0
+}
+
+func (s RAMSessionStorage) GetFromRequest(request *http.Request) (Session, bool) {
+	c, err := request.Cookie(COOKIE_TOKEN_KEY)
+
+	if err == nil && c != nil {
+		session := s.sessions[c.Value]
+		return session, len(session.User.Uid) > 0
+	}
+
+	return Session{}, false
 }
 
 // TODO(remy): expiration methods.

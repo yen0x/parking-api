@@ -79,7 +79,7 @@ func (c Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// sets the cookie
 	cookie := &http.Cookie{
-		Name:  COOKIE_TOKEN_KEY,
+		Name:  runtime.COOKIE_TOKEN_KEY,
 		Value: session.Token,
 	}
 	http.SetCookie(w, cookie)

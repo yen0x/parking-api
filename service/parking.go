@@ -16,7 +16,7 @@ import (
 	"github.com/pborman/uuid"
 )
 
-func CreateParking(rt *runtime.Runtime, user model.User, address, description, price, zip, city string, latitude, longitude float64) (uuid.UUID, error) {
+func CreateParking(rt *runtime.Runtime, user model.User, address, description, zip, city, currency string, price int, latitude, longitude float64) (uuid.UUID, error) {
 	if rt == nil {
 		return []byte{}, nil
 	}
@@ -35,6 +35,7 @@ func CreateParking(rt *runtime.Runtime, user model.User, address, description, p
 		Latitude:     latitude,
 		Longitude:    longitude,
 		DailyPrice:   price,
+		Currency:     currency,
 		CreationTime: now,
 		LastUpdate:   now,
 	}
@@ -52,13 +53,13 @@ func GetParkings(rt *runtime.Runtime, user model.User) ([]model.Parking, error) 
 
 // GetParkingsInSurroundingArea returns the parkings find in the area around
 // the given lat-lon point.
-func GetParkingsInSurroundingArea(rt *runtime.Runtime, lat, lon, width, height float64) ([]model.Parking, error) {
+func GetParkingsInSurroundingArea(rt *runtime.Runtime, neLat, neLon, swLat, swLon float64) ([]model.Parking, error) {
 	pDAO := rt.Storage.ParkingDAO
 
 	// compute an area with the given POI
-	topLeftLat, topLeftLon, bottomRightLat, bottomRightLon := computeArea(lat, lon, width, height)
+	//topLeftLat, topLeftLon, bottomRightLat, bottomRightLon := computeArea(lat, lon, width, height)
 
-	return pDAO.FindInArea(topLeftLat, topLeftLon, bottomRightLat, bottomRightLon)
+	return pDAO.FindInArea(neLat, neLon, swLat, swLon)
 }
 
 // computeArea takes the given POI on the map and computes a square
