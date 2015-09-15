@@ -35,6 +35,7 @@ func CreateBooking(rt *runtime.Runtime, user model.User, startString, endString,
 		return []byte{}, err
 	}
 
+	//TODO (jean) check parkingexists
 	booking := model.Booking{
 		Uid:       uid,
 		UserId:    user.Uid,

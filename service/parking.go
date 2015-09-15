@@ -62,6 +62,20 @@ func GetParkingsInSurroundingArea(rt *runtime.Runtime, neLat, neLon, swLat, swLo
 	return pDAO.FindInArea(neLat, neLon, swLat, swLon)
 }
 
+// ParkingExistsForUser returns whether or not a parking exists for the user
+func ParkingExistsForUser(rt *runtime.Runtime, parkingUid uuid.UUID, user model.User) (bool, error) {
+	pDAO := rt.Storage.ParkingDAO
+	parking, err := pDAO.FindByUid(parkingUid)
+	return parking.UserId.String() == user.Uid.String(), err
+}
+
+// ParkingExists returns whether or not a parking exists
+func ParkingExists(rt *runtime.Runtime, parkingUid uuid.UUID) (bool, error) {
+	pDAO := rt.Storage.ParkingDAO
+	parking, err := pDAO.FindByUid(parkingUid)
+	return len(parking.UserId) > 0, err
+}
+
 // computeArea takes the given POI on the map and computes a square
 // around this point of width/height.
 //

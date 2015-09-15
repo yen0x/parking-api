@@ -21,6 +21,7 @@ type ParkingDAO struct {
 	insert     *Stmt
 	findByUser *Stmt
 	findInArea *Stmt
+	findByUid  *Stmt
 }
 
 const (
@@ -76,6 +77,14 @@ func (d *ParkingDAO) initStmt() error {
 		return err
 	}
 
+	if d.findByUid, err = d.db.Prepare(`
+		SELECT ` + PARKING_FIELDS + `
+		FROM "parking"
+		WHERE uid = $1
+	`); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -86,6 +95,20 @@ func (d *ParkingDAO) FindInArea(topLeftLat, topLeftLon, bottomRightLat, bottomRi
 func (d *ParkingDAO) FindByUser(user model.User) ([]model.Parking, error) {
 	return d.FindByUserId(user.Uid)
 }
+func (d *ParkingDAO) FindByUid(uid uuid.UUID) (model.Parking, error) {
+	found := model.Parking{}
+	rows, err := d.findByUid.Query(uid)
+	if rows == nil || err != nil {
+		return found, err
+	}
+
+	defer rows.Close()
+	if !rows.Next() {
+		return found, err
+	}
+	return parkingFromRow(rows)
+}
+
 func (d *ParkingDAO) FindByUserId(uid uuid.UUID) ([]model.Parking, error) {
 	return readParkings(d.findByUser.Query(uid.String()))
 }
