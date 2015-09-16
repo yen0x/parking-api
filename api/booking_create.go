@@ -4,6 +4,7 @@ import (
 	. "bitbucket.org/remeh/parking/logger"
 	"bitbucket.org/remeh/parking/runtime"
 	"bitbucket.org/remeh/parking/service"
+	"github.com/pborman/uuid"
 
 	"encoding/json"
 	"fmt"
@@ -16,7 +17,7 @@ type CreateBooking struct {
 }
 
 type CreateBookingBody struct {
-	Parking string `json"parking"` //TODO get parking from db
+	Parking string `json"parking"`
 	Start   string `json"start"`
 	End     string `json"end"`
 	Count   int    `json"count"`
@@ -65,6 +66,18 @@ func (c CreateBooking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 
+	}
+
+	parkingExists, err := service.ParkingExists(c.Runtime, uuid.Parse(body.Parking))
+
+	if err != nil {
+		Error(err)
+		w.WriteHeader(500)
+		return
+	} else if parkingExists == false {
+		w.WriteHeader(400)
+		fmt.Fprintf(w, "invalid parking uid")
+		return
 	}
 
 	uuid, err := service.CreateBooking(c.Runtime, user, body.Start, body.End, body.Parking, body.Count)

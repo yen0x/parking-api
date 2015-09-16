@@ -97,7 +97,7 @@ func (d *ParkingDAO) FindByUser(user model.User) ([]model.Parking, error) {
 }
 func (d *ParkingDAO) FindByUid(uid uuid.UUID) (model.Parking, error) {
 	found := model.Parking{}
-	rows, err := d.findByUid.Query(uid)
+	rows, err := d.findByUid.Query(uid.String())
 	if rows == nil || err != nil {
 		return found, err
 	}
