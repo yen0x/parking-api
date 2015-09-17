@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	DATE_FORMAT = "02/01/2006"
+	DATE_FORMAT = "2006-01-02"
 )
 
 func CreateBooking(rt *runtime.Runtime, user model.User, startString, endString, parking string, count int) (uuid.UUID, error) {
