@@ -49,8 +49,9 @@ func CreateParking(rt *runtime.Runtime, user model.User, address, description, z
 		return []byte(""), err
 	}
 
+	// then, atm, creates a global availability
+
 	past, future := timeLimits()
-	// then atm creates a global availability
 	avail := model.Availability{
 		ParkingUid: uid,
 		Start:      past,
@@ -120,7 +121,7 @@ func computeArea(lat, lon, width, height float64) (float64, float64, float64, fl
 }
 
 func timeLimits() (time.Time, time.Time) {
-	past, _ := time.Parse("2006-01-02", "1970-01-01")
-	future, _ := time.Parse("2006-01-02", "2200-01-01")
+	past, _ := time.Parse(DATE_FORMAT, "1970-01-01")
+	future, _ := time.Parse(DATE_FORMAT, "2200-01-01")
 	return past, future
 }

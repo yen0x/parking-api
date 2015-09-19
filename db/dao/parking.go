@@ -58,7 +58,6 @@ func (d *ParkingDAO) initStmt() error {
 		return err
 	}
 
-	// TODO(remy): exclude parking already having a booking for these given dates.
 	if d.findInArea, err = d.db.Prepare(`
 		SELECT DISTINCT ON ("parking"."uid") ` + PARKING_FIELDS + `
 		FROM "parking"
@@ -66,10 +65,18 @@ func (d *ParkingDAO) initStmt() error {
 			ON "availability"."parking_uid" = "parking"."uid"
 			AND "availability"."start" <= $5
 			AND "availability"."end" >= $6
+		LEFT JOIN "booking"
+			ON "parking"."uid" = "booking"."parking_id"
 		WHERE
 			"latitude" <= $1 AND "latitude" >= $3
 			AND
 			"longitude" >= $4 AND "longitude" <= $2
+			AND
+			(
+				"booking"."start" IS NULL and "booking"."end" IS NULL
+				OR
+				NOT ("booking"."start" BETWEEN $5 and $6 OR "booking"."end" BETWEEN $5 and $6)
+			)
 	`); err != nil {
 		return err
 	}
