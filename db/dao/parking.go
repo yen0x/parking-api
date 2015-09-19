@@ -58,9 +58,14 @@ func (d *ParkingDAO) initStmt() error {
 		return err
 	}
 
+	// TODO(remy): exclude parking already having a booking for these given dates.
 	if d.findInArea, err = d.db.Prepare(`
-		SELECT ` + PARKING_FIELDS + `
+		SELECT DISTINCT ON ("parking"."uid") ` + PARKING_FIELDS + `
 		FROM "parking"
+		JOIN "availability"
+			ON "availability"."parking_uid" = "parking"."uid"
+			AND "availability"."start" <= $5
+			AND "availability"."end" >= $6
 		WHERE
 			"latitude" <= $1 AND "latitude" >= $3
 			AND
@@ -88,8 +93,14 @@ func (d *ParkingDAO) initStmt() error {
 	return nil
 }
 
-func (d *ParkingDAO) FindInArea(topLeftLat, topLeftLon, bottomRightLat, bottomRightLon float64) ([]model.Parking, error) {
-	return readParkings(d.findInArea.Query(topLeftLat, topLeftLon, bottomRightLat, bottomRightLon))
+func (d *ParkingDAO) FindInArea(topLeftLat, topLeftLon, bottomRightLat, bottomRightLon float64, start, end time.Time) ([]model.Parking, error) {
+	return readParkings(d.findInArea.Query(
+		topLeftLat,
+		topLeftLon,
+		bottomRightLat,
+		bottomRightLon,
+		start,
+		end))
 }
 
 func (d *ParkingDAO) FindByUser(user model.User) ([]model.Parking, error) {

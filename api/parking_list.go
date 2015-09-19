@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"bitbucket.org/remeh/parking/db/model"
 	. "bitbucket.org/remeh/parking/logger"
@@ -41,6 +42,7 @@ func (c ListParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pNELat, pNELon := vars["nelat"], vars["nelon"]
 	pSWLat, pSWLon := vars["swlat"], vars["swlon"]
+	pStart, pEnd := vars["start"], vars["end"]
 
 	if len(pNELat) == 0 || len(pNELon) == 0 ||
 		len(pSWLat) == 0 || len(pSWLon) == 0 {
@@ -71,9 +73,19 @@ func (c ListParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
+	start, err := c.parseDate(pStart)
+	if err != nil {
+		w.WriteHeader(400)
+		return
+	}
+	end, err := c.parseDate(pEnd)
+	if err != nil {
+		w.WriteHeader(400)
+		return
+	}
 
 	// compute an area with the given POI
-	parkings, err := service.GetParkingsInSurroundingArea(c.Runtime, neLat, neLon, swLat, swLon)
+	parkings, err := service.GetParkingsInSurroundingArea(c.Runtime, neLat, neLon, swLat, swLon, start, end)
 	if err != nil {
 		Error(err.Error())
 		w.WriteHeader(500)
@@ -90,6 +102,10 @@ func (c ListParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
+}
+
+func (c ListParking) parseDate(parameter string) (time.Time, error) {
+	return time.Parse("2006-01-02", parameter)
 }
 
 func (c ListParking) buildEntries(parkings []model.Parking) []listParkingEntry {

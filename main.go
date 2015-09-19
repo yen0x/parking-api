@@ -36,7 +36,7 @@ func declareApiRoutes(rt *runtime.Runtime) {
 	rt.AddApi("/parking/create", AuthRoute(rt, CreateParking{rt}))
 	rt.AddApi("/parking/search/area/{lat},{lon}", AuthRoute(rt, ListParking{rt}))
 
-	rt.AddApi("/parking/search/area/{nelat},{nelon}/{swlat},{swlon}", LogRoute(rt, ListParking{rt}))
+	rt.AddApi("/parking/search/area/{nelat},{nelon}/{swlat},{swlon}/{start}/{end}", LogRoute(rt, ListParking{rt}))
 
 	rt.AddApi("/booking/create", CreateBooking{rt})
 }

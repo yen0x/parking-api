@@ -21,7 +21,11 @@ func CreateParking(rt *runtime.Runtime, user model.User, address, description, z
 		return []byte{}, nil
 	}
 
+	// inserts the parking
+
 	pDAO := rt.Storage.ParkingDAO
+	aDAO := rt.Storage.AvailabilityDAO
+
 	now := time.Now()
 	uid := uuid.Parse(uuid.New())
 
@@ -41,6 +45,19 @@ func CreateParking(rt *runtime.Runtime, user model.User, address, description, z
 	}
 
 	_, err := pDAO.Insert(parking)
+	if err != nil {
+		return []byte(""), err
+	}
+
+	past, future := timeLimits()
+	// then atm creates a global availability
+	avail := model.Availability{
+		ParkingUid: uid,
+		Start:      past,
+		End:        future,
+	}
+	_, err = aDAO.Insert(avail)
+
 	return uid, err
 }
 
@@ -53,13 +70,9 @@ func GetParkings(rt *runtime.Runtime, user model.User) ([]model.Parking, error) 
 
 // GetParkingsInSurroundingArea returns the parkings find in the area around
 // the given lat-lon point.
-func GetParkingsInSurroundingArea(rt *runtime.Runtime, neLat, neLon, swLat, swLon float64) ([]model.Parking, error) {
+func GetParkingsInSurroundingArea(rt *runtime.Runtime, neLat, neLon, swLat, swLon float64, start, end time.Time) ([]model.Parking, error) {
 	pDAO := rt.Storage.ParkingDAO
-
-	// compute an area with the given POI
-	//topLeftLat, topLeftLon, bottomRightLat, bottomRightLon := computeArea(lat, lon, width, height)
-
-	return pDAO.FindInArea(neLat, neLon, swLat, swLon)
+	return pDAO.FindInArea(neLat, neLon, swLat, swLon, start, end)
 }
 
 // ParkingExistsForUser returns whether or not a parking exists for the user
@@ -104,4 +117,10 @@ func computeArea(lat, lon, width, height float64) (float64, float64, float64, fl
 	dLon := offLon * 180 / math.Pi
 
 	return lat + dLat, lon - dLon, lat - dLat, lon + dLat
+}
+
+func timeLimits() (time.Time, time.Time) {
+	past, _ := time.Parse("2006-01-02", "1970-01-01")
+	future, _ := time.Parse("2006-01-02", "2200-01-01")
+	return past, future
 }
