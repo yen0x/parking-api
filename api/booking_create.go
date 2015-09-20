@@ -1,15 +1,16 @@
 package api
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"time"
+
 	. "bitbucket.org/remeh/parking/logger"
 	"bitbucket.org/remeh/parking/runtime"
 	"bitbucket.org/remeh/parking/service"
-	"github.com/pborman/uuid"
 
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
+	"github.com/pborman/uuid"
 )
 
 type CreateBooking struct {
@@ -21,7 +22,6 @@ type CreateBookingBody struct {
 	Start   string `json"start"`
 	End     string `json"end"`
 	Count   int    `json"count"`
-	Email   string `json"email"` // FIXME(remy): won't be useful as soon as we have a session token
 }
 
 type CreateBookingResp struct {
@@ -36,51 +36,51 @@ func (c CreateBooking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 		return
 	}
-	body := CreateBookingBody{}
-	json.Unmarshal(data, &body)
 
-	fmt.Println(body)
-
-	// FIXME(remy): won't be useful as soon as we have a session token
-	user, err := service.GetUser(c.Runtime, body.Email)
-
-	if err != nil {
-		Error(err)
-		w.WriteHeader(500)
+	session, exists := c.Runtime.SessionStorage.GetFromRequest(r)
+	if !exists {
+		w.WriteHeader(403)
 		return
 	}
 
-	// Unknown user.
+	body := CreateBookingBody{}
+	json.Unmarshal(data, &body)
 
-	if len(user.Uid) == 0 {
+	// Checks that the form has been correctly filled.
+
+	start, err := time.Parse(service.DATE_FORMAT, body.Start)
+	if err != nil {
 		w.WriteHeader(400)
 		return
 	}
 
-	// Checks that the form has been correctly filled.
+	end, err := time.Parse(service.DATE_FORMAT, body.End)
+	if err != nil {
+		w.WriteHeader(400)
+		return
+	}
 
-	if len(body.Start) == 0 ||
-		len(body.End) == 0 ||
-		len(body.Parking) == 0 ||
+	if len(body.Parking) == 0 ||
 		body.Count <= 0 {
 		w.WriteHeader(400)
 		return
 
 	}
 
-	parkingExists, err := service.ParkingExists(c.Runtime, uuid.Parse(body.Parking))
+	// checks that the parking actually exists.
+	parkingUid := uuid.Parse(body.Parking)
+	parkingExists, err := service.ParkingExists(c.Runtime, parkingUid)
 
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
 		return
-	} else if parkingExists == false {
+	} else if !parkingExists {
 		w.WriteHeader(400)
-		fmt.Fprintf(w, "invalid parking uid")
 		return
 	}
 
-	uuid, err := service.CreateBooking(c.Runtime, user, body.Start, body.End, body.Parking, body.Count)
+	uuid, err := service.CreateBooking(c.Runtime, session.User, start, end, parkingUid, body.Count)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
