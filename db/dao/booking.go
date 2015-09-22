@@ -22,7 +22,7 @@ type BookingDAO struct {
 const (
 	BOOKING_FIELDS = `"booking"."uid",
 					"booking"."user_id",
-					"booking"."parking_id",
+					"booking"."parking_uid",
 					"booking"."start",
 					"booking"."end",
 					"booking"."count"`
