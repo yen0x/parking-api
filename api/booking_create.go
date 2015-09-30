@@ -69,18 +69,18 @@ func (c CreateBooking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// checks that the parking actually exists.
 	parkingUid := uuid.Parse(body.Parking)
-	parkingExists, err := service.ParkingExists(c.Runtime, parkingUid)
+	parking, err := service.GetParking(c.Runtime, parkingUid)
 
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
 		return
-	} else if !parkingExists {
+	} else if len(parking.Uid) <= 0 {
 		w.WriteHeader(400)
 		return
 	}
 
-	uuid, err := service.CreateBooking(c.Runtime, session.User, start, end, parkingUid, body.Count)
+	uuid, err := service.CreateBooking(c.Runtime, session.User, start, end, parking, body.Count)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)

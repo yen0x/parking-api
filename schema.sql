@@ -53,7 +53,7 @@ CREATE TABLE "availability" (
     "end" timestamp with time zone
 );
 
-CREATE UNIQUE INDEX ON "availability" ("parking_id", "start", "end");
+CREATE UNIQUE INDEX ON "availability" ("parking_uid", "start", "end");
 
 -- Booking
 
@@ -64,7 +64,7 @@ CREATE TABLE "booking" (
     "count" INTEGER DEFAULT 1,
     "start" timestamp with time zone, 
     "end" timestamp with time zone
-)
+);
 
 CREATE UNIQUE INDEX ON "booking" ("uid");
 CREATE INDEX ON "booking" ("user_id");

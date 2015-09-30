@@ -90,6 +90,13 @@ func ParkingExists(rt *runtime.Runtime, parkingUid uuid.UUID) (bool, error) {
 	return len(parking.UserId) > 0, err
 }
 
+// Get Parking based on uuid
+func GetParking(rt *runtime.Runtime, parkingUid uuid.UUID) (model.Parking, error) {
+	pDAO := rt.Storage.ParkingDAO
+	parking, err := pDAO.FindByUid(parkingUid)
+	return parking, err
+}
+
 // computeArea takes the given POI on the map and computes a square
 // around this point of width/height.
 //
