@@ -15,9 +15,9 @@ type ListParking struct {
 }
 
 type ParkingResp struct {
-	Uid     string
-	Address string
-	City    string
+	Uid     string `json:"uid"`
+	Address string `json:"address"`
+	City    string `json:"city"`
 }
 
 func (c ListParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
