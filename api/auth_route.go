@@ -7,6 +7,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"bitbucket.org/remeh/parking/runtime"
@@ -23,6 +24,7 @@ func (a AuthAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(runtime.COOKIE_TOKEN_KEY)
 	if err != nil {
 		w.WriteHeader(403)
+		fmt.Println("could not read cookie")
 		return
 	}
 
@@ -31,6 +33,7 @@ func (a AuthAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	_, exists := a.Runtime.SessionStorage.Get(cookie.Value)
 	if !exists {
 		w.WriteHeader(403)
+		fmt.Println("could not find session")
 		return
 	}
 
