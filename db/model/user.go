@@ -25,3 +25,7 @@ type User struct {
 	CreationTime time.Time
 	LastUpdate   time.Time
 }
+
+func (u *User) ToMailString() string {
+	return u.Firstname + " " + u.Lastname + "<" + u.Email + ">"
+}

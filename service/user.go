@@ -73,3 +73,9 @@ func cryptPassword(password string) (string, error) {
 	b, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	return string(b), err
 }
+
+func GetUserByParking(rt *runtime.Runtime, parkingId uuid.UUID) (model.User, error) {
+	uDAO := rt.Storage.UserDAO
+	user, err := uDAO.FindByParking(parkingId)
+	return user, err
+}

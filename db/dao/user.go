@@ -23,6 +23,7 @@ type UserDAO struct {
 	create             *Stmt
 	getCryptedPassword *Stmt
 	findByEmail        *Stmt
+	findByParking      *Stmt
 }
 
 const (
@@ -87,6 +88,14 @@ func (d *UserDAO) initStmt() error {
 		return err
 	}
 
+	if d.findByParking, err = d.db.Prepare(`
+		SELECT ` + USER_FIELDS + ` 
+		FROM "user" join "parking" on "parking"."user_id" = "user"."uid"
+		WHERE "parking"."uid" = $1
+	`); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -143,6 +152,23 @@ func (d *UserDAO) FindByEmail(email string) (model.User, error) {
 	}
 
 	rows, err := d.findByEmail.Query(email)
+	if rows == nil || err != nil {
+		return found, err
+	}
+
+	defer rows.Close()
+
+	if !rows.Next() {
+		return found, nil
+	}
+
+	return userFromRow(rows)
+}
+
+func (d *UserDAO) FindByParking(parkingId uuid.UUID) (model.User, error) {
+	found := model.User{}
+
+	rows, err := d.findByParking.Query(parkingId.String())
 	if rows == nil || err != nil {
 		return found, err
 	}
