@@ -9,14 +9,16 @@ package dao
 import (
 	"bitbucket.org/remeh/parking/db/model"
 	. "database/sql"
+	"time"
 
-	//"github.com/pborman/uuid"
+	"github.com/pborman/uuid"
 )
 
 type BookingDAO struct {
 	db *DB
 
-	insert *Stmt
+	insert       *Stmt
+	findByUserId *Stmt
 }
 
 const (
@@ -46,6 +48,13 @@ func (d *BookingDAO) initStmt() error {
 	   `); err != nil {
 		return err
 	}
+
+	if d.findByUserId, err = d.db.Prepare(`
+	   SELECT ` + BOOKING_FIELDS + ` from "booking"
+	   where user_id = $1
+	   `); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -62,4 +71,57 @@ func (d *BookingDAO) Insert(booking model.Booking) (Result, error) {
 		booking.End,
 		booking.Count,
 	)
+}
+
+func (d *BookingDAO) FindByUserId(uid uuid.UUID) ([]model.Booking, error) {
+	return readBookings(d.findByUserId.Query(uid.String()))
+}
+
+// readBookings fully reads (and closes) the given rows to return
+// the read bookings or an error if something wrong occurred.
+func readBookings(rows *Rows, err error) ([]model.Booking, error) {
+	result := make([]model.Booking, 0)
+
+	if err != nil || rows == nil {
+		return result, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		booking, err := bookingFromRow(rows)
+		if err != nil {
+			return result, err
+		}
+		result = append(result, booking)
+	}
+
+	return result, err
+}
+
+// bookingFromRow reads an parking model from the current row.
+func bookingFromRow(rows *Rows) (model.Booking, error) {
+	var uid,
+		userId,
+		parkingId string
+	var count int
+	var start,
+		end time.Time
+
+	err := rows.Scan(
+		&uid,
+		&userId,
+		&parkingId,
+		&start,
+		&end,
+		&count,
+	)
+
+	return model.Booking{
+		Uid:    uuid.Parse(uid),
+		UserId: uuid.Parse(userId),
+		Start:  start,
+		End:    end,
+		Count:  count,
+	}, err
 }

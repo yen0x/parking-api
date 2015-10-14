@@ -72,3 +72,9 @@ func CreateBooking(rt *runtime.Runtime, user model.User, start, end time.Time, p
 	}
 	return uid, err
 }
+
+func GetBookings(rt *runtime.Runtime, user model.User) ([]model.Booking, error) {
+	bDAO := rt.Storage.BookingDAO
+	bookings, err := bDAO.FindByUserId(user.Uid)
+	return bookings, err
+}
