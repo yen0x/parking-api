@@ -69,6 +69,11 @@ func GetParkings(rt *runtime.Runtime, user model.User) ([]model.Parking, error) 
 	return parkings, err
 }
 
+func GetParkingByUid(rt *runtime.Runtime, uid uuid.UUID) (model.Parking, error) {
+	pDAO := rt.Storage.ParkingDAO
+	return pDAO.FindByUid(uid)
+}
+
 // GetParkingsInSurroundingArea returns the parkings find in the area around
 // the given lat-lon point.
 func GetParkingsInSurroundingArea(rt *runtime.Runtime, neLat, neLon, swLat, swLon float64, start, end time.Time) ([]model.Parking, error) {

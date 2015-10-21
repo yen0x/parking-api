@@ -113,6 +113,7 @@ func (d *ParkingDAO) FindInArea(topLeftLat, topLeftLon, bottomRightLat, bottomRi
 func (d *ParkingDAO) FindByUser(user model.User) ([]model.Parking, error) {
 	return d.FindByUserId(user.Uid)
 }
+
 func (d *ParkingDAO) FindByUid(uid uuid.UUID) (model.Parking, error) {
 	found := model.Parking{}
 	rows, err := d.findByUid.Query(uid.String())

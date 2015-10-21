@@ -38,7 +38,14 @@ func (c ListBooking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := json.Marshal(c.serializeBookings(bookings))
+	bookingresps, err := c.serializeBookings(c.Runtime, bookings)
+	if err != nil {
+		Error(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	data, err := json.Marshal(bookingresps)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
@@ -48,19 +55,26 @@ func (c ListBooking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func (c ListBooking) serializeBookings(bookings []model.Booking) []BookingResp {
+func (c ListBooking) serializeBookings(rt *runtime.Runtime, bookings []model.Booking) ([]BookingResp, error) {
 	rv := make([]BookingResp, len(bookings))
-	for i, p := range bookings {
-		rv[i] = c.serializeBooking(p)
+	for i, b := range bookings {
+		parking, err := service.GetParkingByUid(rt, b.ParkingId)
+		if err != nil {
+			return nil, err
+		}
+		rv[i] = c.serializeBooking(b, parking)
 	}
-	return rv
+	return rv, nil
 }
 
-func (c ListBooking) serializeBooking(booking model.Booking) BookingResp {
+func (c ListBooking) serializeBooking(booking model.Booking, parking model.Parking) BookingResp {
 	return BookingResp{
-		Uid:   booking.Uid.String(),
-		Start: booking.Start.String(),
-		End:   booking.End.String(),
-		Count: booking.Count,
+		Uid:        booking.Uid.String(),
+		Start:      booking.Start.String(),
+		End:        booking.End.String(),
+		Count:      booking.Count,
+		ParkingUid: parking.Uid.String(),
+		Address:    parking.Address,
+		City:       parking.City,
 	}
 }
