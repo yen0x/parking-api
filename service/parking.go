@@ -7,6 +7,7 @@
 package service
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -71,7 +72,8 @@ func GetParkings(rt *runtime.Runtime, user model.User) ([]model.Parking, error) 
 
 func GetParkingByUid(rt *runtime.Runtime, uid uuid.UUID) (model.Parking, error) {
 	pDAO := rt.Storage.ParkingDAO
-	return pDAO.FindByUid(uid)
+	parking, err := pDAO.FindByUid(uid)
+	return parking, err
 }
 
 // GetParkingsInSurroundingArea returns the parkings find in the area around
@@ -99,6 +101,7 @@ func ParkingExists(rt *runtime.Runtime, parkingUid uuid.UUID) (bool, error) {
 func GetParking(rt *runtime.Runtime, parkingUid uuid.UUID) (model.Parking, error) {
 	pDAO := rt.Storage.ParkingDAO
 	parking, err := pDAO.FindByUid(parkingUid)
+	fmt.Println(parking.Uid)
 	return parking, err
 }
 

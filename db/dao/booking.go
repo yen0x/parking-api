@@ -24,7 +24,7 @@ type BookingDAO struct {
 const (
 	BOOKING_FIELDS = `"booking"."uid",
 					"booking"."user_id",
-					"booking"."parking_uid",
+					"booking"."parking_id",
 					"booking"."start",
 					"booking"."end",
 					"booking"."count"`
@@ -118,10 +118,11 @@ func bookingFromRow(rows *Rows) (model.Booking, error) {
 	)
 
 	return model.Booking{
-		Uid:    uuid.Parse(uid),
-		UserId: uuid.Parse(userId),
-		Start:  start,
-		End:    end,
-		Count:  count,
+		Uid:       uuid.Parse(uid),
+		UserId:    uuid.Parse(userId),
+		ParkingId: uuid.Parse(parkingId),
+		Start:     start,
+		End:       end,
+		Count:     count,
 	}, err
 }

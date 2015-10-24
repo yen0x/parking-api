@@ -66,7 +66,7 @@ func (d *ParkingDAO) initStmt() error {
 			AND "availability"."start" <= $5
 			AND "availability"."end" >= $6
 		LEFT JOIN "booking"
-			ON "parking"."uid" = "booking"."parking_uid"
+			ON "parking"."uid" = "booking"."parking_id"
 		WHERE
 			"latitude" <= $1 AND "latitude" >= $3
 			AND

@@ -5,6 +5,7 @@ import (
 	. "bitbucket.org/remeh/parking/logger"
 	"bitbucket.org/remeh/parking/runtime"
 	"bitbucket.org/remeh/parking/service"
+	"fmt"
 
 	"encoding/json"
 	"net/http"
@@ -58,6 +59,7 @@ func (c ListBooking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (c ListBooking) serializeBookings(rt *runtime.Runtime, bookings []model.Booking) ([]BookingResp, error) {
 	rv := make([]BookingResp, len(bookings))
 	for i, b := range bookings {
+		fmt.Println(b.ParkingId)
 		parking, err := service.GetParkingByUid(rt, b.ParkingId)
 		if err != nil {
 			return nil, err
