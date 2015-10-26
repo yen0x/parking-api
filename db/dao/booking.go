@@ -19,6 +19,8 @@ type BookingDAO struct {
 
 	insert       *Stmt
 	findByUserId *Stmt
+	deleteByUid  *Stmt
+	findByUid    *Stmt
 }
 
 const (
@@ -55,6 +57,20 @@ func (d *BookingDAO) initStmt() error {
 	   `); err != nil {
 		return err
 	}
+
+	if d.deleteByUid, err = d.db.Prepare(`
+	   DELETE from "booking"
+	   where uid = $1
+	   `); err != nil {
+		return err
+	}
+
+	if d.findByUid, err = d.db.Prepare(`
+	   SELECT ` + BOOKING_FIELDS + ` from "booking"
+	   where uid = $1
+	   `); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -73,8 +89,26 @@ func (d *BookingDAO) Insert(booking model.Booking) (Result, error) {
 	)
 }
 
+func (d *BookingDAO) Delete(booking model.Booking) (Result, error) {
+	return d.deleteByUid.Exec(booking.Uid.String())
+}
+
 func (d *BookingDAO) FindByUserId(uid uuid.UUID) ([]model.Booking, error) {
 	return readBookings(d.findByUserId.Query(uid.String()))
+}
+
+func (d *BookingDAO) FindByUid(uid uuid.UUID) (model.Booking, error) {
+	found := model.Booking{}
+	rows, err := d.findByUid.Query(uid.String())
+	if rows == nil || err != nil {
+		return found, err
+	}
+
+	defer rows.Close()
+	if !rows.Next() {
+		return found, err
+	}
+	return bookingFromRow(rows)
 }
 
 // readBookings fully reads (and closes) the given rows to return
@@ -99,7 +133,7 @@ func readBookings(rows *Rows, err error) ([]model.Booking, error) {
 	return result, err
 }
 
-// bookingFromRow reads an parking model from the current row.
+// bookingFromRow reads a booking model from the current row.
 func bookingFromRow(rows *Rows) (model.Booking, error) {
 	var uid,
 		userId,

@@ -78,3 +78,14 @@ func GetBookings(rt *runtime.Runtime, user model.User) ([]model.Booking, error) 
 	bookings, err := bDAO.FindByUserId(user.Uid)
 	return bookings, err
 }
+
+func DeleteBooking(rt *runtime.Runtime, booking model.Booking) (uuid.UUID, error) {
+	bDAO := rt.Storage.BookingDAO
+	_, err := bDAO.Delete(booking)
+	return booking.Uid, err
+}
+
+func FindBookingByUid(rt *runtime.Runtime, uid uuid.UUID) (model.Booking, error) {
+	bDAO := rt.Storage.BookingDAO
+	return bDAO.FindByUid(uid)
+}
