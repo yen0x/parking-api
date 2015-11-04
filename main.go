@@ -39,4 +39,5 @@ func declareApiRoutes(rt *runtime.Runtime) {
 
 	rt.AddApi("/booking/create", CreateBooking{rt})
 	rt.AddApi("/booking/list", AuthRoute(rt, ListBooking{rt}))
+	rt.AddApi("/booking/{uid}/delete", DeleteBooking{rt})
 }
