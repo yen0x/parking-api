@@ -97,6 +97,14 @@ func ParkingExists(rt *runtime.Runtime, parkingUid uuid.UUID) (bool, error) {
 	return len(parking.UserId) > 0, err
 }
 
+//Delete parking and return its uid
+func DeleteParking(rt *runtime.Runtime, parking model.Parking) (uuid.UUID, error) {
+	pDAO := rt.Storage.ParkingDAO
+	_, err := pDAO.Delete(parking)
+	return parking.Uid, err
+}
+
+//TODO delete
 // Get Parking based on uuid
 func GetParking(rt *runtime.Runtime, parkingUid uuid.UUID) (model.Parking, error) {
 	pDAO := rt.Storage.ParkingDAO

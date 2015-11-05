@@ -18,10 +18,11 @@ import (
 type ParkingDAO struct {
 	db *DB
 
-	insert     *Stmt
-	findByUser *Stmt
-	findInArea *Stmt
-	findByUid  *Stmt
+	insert      *Stmt
+	findByUser  *Stmt
+	findInArea  *Stmt
+	findByUid   *Stmt
+	deleteByUid *Stmt
 }
 
 const (
@@ -97,6 +98,14 @@ func (d *ParkingDAO) initStmt() error {
 		return err
 	}
 
+	if d.deleteByUid, err = d.db.Prepare(`
+		DELETE	
+		FROM "parking"
+		WHERE uid = $1
+	`); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -112,6 +121,10 @@ func (d *ParkingDAO) FindInArea(topLeftLat, topLeftLon, bottomRightLat, bottomRi
 
 func (d *ParkingDAO) FindByUser(user model.User) ([]model.Parking, error) {
 	return d.FindByUserId(user.Uid)
+}
+
+func (d *ParkingDAO) Delete(parking model.Parking) (Result, error) {
+	return d.deleteByUid.Exec(parking.Uid.String())
 }
 
 func (d *ParkingDAO) FindByUid(uid uuid.UUID) (model.Parking, error) {
