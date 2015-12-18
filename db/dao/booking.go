@@ -17,10 +17,11 @@ import (
 type BookingDAO struct {
 	db *DB
 
-	insert       *Stmt
-	findByUserId *Stmt
-	deleteByUid  *Stmt
-	findByUid    *Stmt
+	insert          *Stmt
+	findByUserId    *Stmt
+	findByParkingId *Stmt
+	deleteByUid     *Stmt
+	findByUid       *Stmt
 }
 
 const (
@@ -71,6 +72,13 @@ func (d *BookingDAO) initStmt() error {
 	   `); err != nil {
 		return err
 	}
+
+	if d.findByParkingId, err = d.db.Prepare(`
+	   SELECT ` + BOOKING_FIELDS + ` from "booking"
+	   where parking_id = $1
+	   `); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -95,6 +103,10 @@ func (d *BookingDAO) Delete(booking model.Booking) (Result, error) {
 
 func (d *BookingDAO) FindByUserId(uid uuid.UUID) ([]model.Booking, error) {
 	return readBookings(d.findByUserId.Query(uid.String()))
+}
+
+func (d *BookingDAO) FindByParkingId(uid uuid.UUID) ([]model.Booking, error) {
+	return readBookings(d.findByParkingId.Query(uid.String()))
 }
 
 func (d *BookingDAO) FindByUid(uid uuid.UUID) (model.Booking, error) {

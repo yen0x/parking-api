@@ -7,31 +7,32 @@ import (
 	"bitbucket.org/remeh/parking/service"
 
 	"encoding/json"
+	"github.com/gorilla/mux"
+	"github.com/pborman/uuid"
 	"net/http"
 )
 
-type ListBooking struct {
+type CalParking struct {
 	Runtime *runtime.Runtime
 }
 
-type BookingResp struct {
-	Uid        string `json:"uid"`
-	Start      string `json:"start"`
-	End        string `json:"end"`
-	Count      int    `json:"count"`
-	ParkingUid string `json:"parkinguid"`
-	Address    string `json:"address"`
-	City       string `json:"city"`
-}
-
-func (c ListBooking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (c CalParking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	session, exists := c.Runtime.SessionStorage.GetFromRequest(r)
 	if !exists {
 		w.WriteHeader(403)
 		return
 	}
 
-	bookings, err := service.GetBookings(c.Runtime, session.User)
+	vars := mux.Vars(r)
+	parkingUid := vars["parkinguid"]
+
+	parking, err := service.GetParking(c.Runtime, uuid.Parse(parkingUid))
+	if !uuid.Equal(parking.UserId, session.User.Uid) {
+		w.WriteHeader(403)
+		return
+	}
+
+	bookings, err := service.GetBookingsByParking(c.Runtime, parking)
 	if err != nil {
 		Error(err)
 		w.WriteHeader(500)
@@ -55,7 +56,7 @@ func (c ListBooking) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func (c ListBooking) serializeBookings(rt *runtime.Runtime, bookings []model.Booking) ([]BookingResp, error) {
+func (c CalParking) serializeBookings(rt *runtime.Runtime, bookings []model.Booking) ([]BookingResp, error) {
 	rv := make([]BookingResp, len(bookings))
 	for i, b := range bookings {
 		parking, err := service.GetParkingByUid(rt, b.ParkingId)
@@ -67,7 +68,7 @@ func (c ListBooking) serializeBookings(rt *runtime.Runtime, bookings []model.Boo
 	return rv, nil
 }
 
-func (c ListBooking) serializeBooking(booking model.Booking, parking model.Parking) BookingResp {
+func (c CalParking) serializeBooking(booking model.Booking, parking model.Parking) BookingResp {
 	return BookingResp{
 		Uid:        booking.Uid.String(),
 		Start:      booking.Start.String(),
